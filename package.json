@@ -1,6 +1,6 @@
 {
   "name": "tracetree",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Watch Claude Code agents and subagents work: a live dashboard over the transcripts on your disk.",
   "keywords": [
     "agents",
