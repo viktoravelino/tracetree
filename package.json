@@ -30,17 +30,19 @@
     "tracetree": "src/cli.ts"
   },
   "files": [
-    "src",
-    "web",
+    "LICENSE",
+    "README.md",
     "bunfig.toml",
     "components.json",
+    "scripts",
+    "src",
     "tsconfig.json",
-    "README.md",
-    "LICENSE"
+    "web"
   ],
   "scripts": {
     "dev": "bun --hot src/cli.ts serve",
     "serve": "bun run src/cli.ts serve",
+    "demo": "bun run scripts/demo.ts",
     "ingest": "bun run src/cli.ts ingest",
     "stats": "bun run src/cli.ts stats",
     "tree": "bun run src/cli.ts tree",

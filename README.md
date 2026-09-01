@@ -25,7 +25,7 @@ that agent's own thread.
 
 </details>
 
-> Screenshots use synthetic data, not a real session.
+> Screenshots come from `bun run demo`, not a real session.
 
 ## Requirements
 
@@ -42,6 +42,21 @@ bun run serve       # dashboard on http://localhost:4000
 
 `serve` catches the index up first, then watches for changes, so a session you
 start afterwards appears on its own.
+
+## Try it without your own history
+
+```bash
+bun run demo
+```
+
+Writes a synthetic `~/.claude` under `.demo/`, indexes it, and serves it on
+:4300 — six sessions across five invented projects, one of which fans out three
+agents and nests a fourth, with a skill invocation, tasks and enough markdown to
+exercise the renderer. Nothing is read from your real transcripts and nothing is
+written outside `.demo/`, which is gitignored and rebuilt from scratch each run.
+
+It is also how the screenshots above are produced, so they can be regenerated
+without publishing anyone's work. `--no-serve` stops after building the index.
 
 ## Commands
 

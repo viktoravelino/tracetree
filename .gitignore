@@ -1,6 +1,7 @@
 *.db
 *.db-shm
 *.db-wal
+.demo/
 bun.lockb
 data/
 node_modules/
