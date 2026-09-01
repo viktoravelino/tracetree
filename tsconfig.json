@@ -7,7 +7,8 @@
     "moduleDetection": "force",
     "types": ["bun"],
     "jsx": "react-jsx",
-    "baseUrl": ".",
+    // No baseUrl: TypeScript 7 removed it, and since 4.1 `paths` resolves
+    // relative to this file anyway. Bun reads this alias too.
     "paths": { "@/*": ["./web/*"] },
 
     "strict": true,
