@@ -4,6 +4,14 @@
   "description": "Watch Claude Code agents and subagents work: a live dashboard over the transcripts on your disk.",
   "license": "MIT",
   "author": "Viktor Avelino",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viktoravelino/tracetree.git"
+  },
+  "homepage": "https://github.com/viktoravelino/tracetree#readme",
+  "bugs": {
+    "url": "https://github.com/viktoravelino/tracetree/issues"
+  },
   "type": "module",
   "keywords": [
     "claude-code",
