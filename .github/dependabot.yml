@@ -1,0 +1,28 @@
+# Version updates, kept quiet. Security updates are separate and always on
+# (repository settings).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "ci"
+
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "deps"
+    groups:
+      # React and its DOM package move together; so do the remark/rehype
+      # plugins, which are a single ecosystem in practice.
+      react:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+      markdown:
+        patterns: ["remark-*", "rehype-*", "react-markdown"]
+      everything-else:
+        patterns: ["*"]
+        exclude-patterns:
+          ["react", "react-dom", "@types/react", "@types/react-dom", "remark-*", "rehype-*", "react-markdown"]

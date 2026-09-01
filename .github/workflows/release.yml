@@ -1,0 +1,110 @@
+name: Release
+
+# Tag main with v<version> matching package.json to publish to npm and open the
+# GitHub release. npm trusted publishing (OIDC) is bound to this file's name and
+# attaches provenance automatically, so there is no npm token to hold. See
+# docs/RELEASING.md.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run npm publish --dry-run; publish nothing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write # create the GitHub release
+  id-token: write # npm provenance
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          # A publish workflow should not restore a package-manager cache: a
+          # poisoned cache could read the OIDC token.
+          package-manager-cache: false
+
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun run lint
+
+      # The same end-to-end check CI runs, because a release that cannot read a
+      # transcript is worse than no release.
+      - run: bun run demo --no-serve
+
+      # A tag that disagrees with package.json publishes a version nobody asked
+      # for, and the mismatch is invisible afterwards.
+      - name: The tag matches package.json
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          tagged="${GITHUB_REF_NAME#v}"
+          declared=$(node -p "require('./package.json').version")
+          if [[ "$tagged" != "$declared" ]]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match package.json version $declared"
+            exit 1
+          fi
+          echo "version=$declared" >> "$GITHUB_ENV"
+
+      - name: Publish to npm
+        id: publish
+        env:
+          DRY_RUN: ${{ inputs.dry_run == true && '--dry-run' || '' }}
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./package.json').version")
+          # Skipped when the version is already published, so a re-run after a
+          # failure later in the job does not fail here.
+          if npm view "tracetree@$version" version >/dev/null 2>&1; then
+            echo "result=already on npm, nothing published" >> "$GITHUB_OUTPUT"
+          else
+            npm publish $DRY_RUN
+            if [[ -n "$DRY_RUN" ]]; then
+              echo "result=dry run, nothing published" >> "$GITHUB_OUTPUT"
+            else
+              echo "result=published" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      # The run's summary says what happened, so a release can be checked
+      # without opening a log.
+      - name: Summarize
+        env:
+          VERSION: ${{ steps.publish.outputs.version }}
+          RESULT: ${{ steps.publish.outputs.result }}
+        run: |
+          {
+            echo "### tracetree@$VERSION"
+            echo
+            echo "| result | try it |"
+            echo "| --- | --- |"
+            echo "| $RESULT | \`bunx tracetree@$VERSION --help\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=tracetree@$VERSION::$RESULT"
+
+      - name: GitHub release
+        if: github.event_name == 'push' && inputs.dry_run != true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          flags=(--generate-notes --verify-tag)
+          [[ "$GITHUB_REF_NAME" == *-* ]] && flags+=(--prerelease)
+          gh release create "$GITHUB_REF_NAME" "${flags[@]}"
