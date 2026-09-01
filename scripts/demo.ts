@@ -232,6 +232,15 @@ for (const agent of agents) {
 // ---------------------------------------------------------------------------
 // Enough other projects that the sidebar and overview are not a single row.
 // ---------------------------------------------------------------------------
+/** Distinct, as real session ids are; a shared prefix makes `tree` ambiguous. */
+const OTHER_SESSION_IDS = [
+  "3e9b7c05-41d8-4a62-9f13-2b70ce4188aa",
+  "b81d4f2a-6c07-4e95-8d31-77a0fe22bb64",
+  "5f0a2d63-9e18-4b47-a052-c31d84ff90e7",
+  "c47e8b19-2035-4d6a-91cf-6ea25b73d012",
+  "9a13f6d8-7b40-4c29-83e5-1fd06ac45b93",
+];
+
 const others = [
   ["-home-dev-projects-web-client", "/home/dev/projects/web-client", "Fix hydration mismatch on the dashboard", "main"],
   ["-home-dev-projects-web-client", "/home/dev/projects/web-client", "Migrate the table to virtualised rows", "perf/virtual-rows"],
@@ -241,7 +250,7 @@ const others = [
 ] as const;
 
 others.forEach(([slug, cwd, sessionTitle, branch], i) => {
-  const sid = `7c2f1a44-9b30-4d21-a6e8-15c0de99f1${String(i + 10).padStart(2, "0")}`;
+  const sid = OTHER_SESSION_IDS[i] ?? `00000000-0000-4000-8000-${String(i).padStart(12, "0")}`;
   const ctx: Ctx = { sessionId: sid, cwd, branch };
   const of = join(ROOT, "projects", slug, `${sid}.jsonl`);
   title(of, ctx, sessionTitle);
