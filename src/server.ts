@@ -10,6 +10,7 @@ import {
   type SessionQuery,
   type StreamEvent,
 } from "./contract.ts";
+import { VERSION } from "./version.ts";
 import { readLiveSessions } from "./live.ts";
 import {
   getMessageImage,
@@ -325,7 +326,7 @@ export function startServer(options: ServeOptions): Bun.Server<undefined> {
     // reaped and silently reconnect forever. Long-lived streams need no timeout.
     idleTimeout: 0,
     routes: {
-      "/api/overview": guard(() => json(overview(db, liveSessions(root)))),
+      "/api/overview": guard(() => json({ ...overview(db, liveSessions(root)), version: VERSION })),
 
       "/api/projects": guard(() => json(listProjects(db))),
 

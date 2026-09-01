@@ -185,6 +185,17 @@ function App() {
         <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
           <header className="flex h-12 shrink-0 items-center gap-3 border-b px-4">
             <h1 className="shrink-0 text-sm font-semibold tracking-tight">tracetree</h1>
+            {overview.status === "ready" && (
+              <a
+                className="shrink-0 text-xs text-muted-foreground hover:underline"
+                href={`https://github.com/viktoravelino/tracetree/releases/tag/v${overview.data.version}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`tracetree version ${overview.data.version} release notes`}
+              >
+                v{overview.data.version}
+              </a>
+            )}
             <p className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
               {selectedProject ? (
                 <>
