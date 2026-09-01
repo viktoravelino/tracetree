@@ -23,8 +23,8 @@ const sectionHeading = "text-xs font-medium tracking-wider text-muted-foreground
 export function OverviewView({ overview, onSelectProject }: OverviewViewProps) {
   const { stats, agentTypes, live, projects } = overview;
   const maxAgents = agentTypes[0]?.count ?? 1;
-  const recent = [...projects]
-    .sort((a, b) => (b.lastActive ?? "").localeCompare(a.lastActive ?? ""))
+  const recent = projects
+    .toSorted((a, b) => (b.lastActive ?? "").localeCompare(a.lastActive ?? ""))
     .slice(0, 5);
 
   return (

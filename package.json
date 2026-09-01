@@ -39,6 +39,10 @@
     "tsconfig.json",
     "web"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "dev": "bun --hot src/cli.ts serve",
     "serve": "bun run src/cli.ts serve",
@@ -47,7 +51,10 @@
     "stats": "bun run src/cli.ts stats",
     "tree": "bun run src/cli.ts tree",
     "query": "bun run src/cli.ts query",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check ."
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -69,6 +76,8 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "bun-plugin-tailwind": "^0.1.2",
+    "oxfmt": "^0.66.0",
+    "oxlint": "^1.81.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.7.2"
   }

@@ -59,5 +59,5 @@ export function readLiveSessions(root: string): LiveSession[] {
     });
   }
 
-  return sessions.sort((a, b) => (b.startedAt?.getTime() ?? 0) - (a.startedAt?.getTime() ?? 0));
+  return sessions.toSorted((a, b) => (b.startedAt?.getTime() ?? 0) - (a.startedAt?.getTime() ?? 0));
 }

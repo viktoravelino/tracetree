@@ -275,7 +275,7 @@ function statusVariant(status: string | null) {
 }
 
 function ToolBars({ tools }: { tools: ToolSummary[] }) {
-  const sorted = [...tools].sort((a, b) => b.count - a.count);
+  const sorted = tools.toSorted((a, b) => b.count - a.count);
   const max = sorted[0]?.count ?? 1;
 
   return (
