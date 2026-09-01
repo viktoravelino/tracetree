@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import type { Database } from "bun:sqlite";
 
@@ -12,6 +12,11 @@ import { startWatching } from "./watch.ts";
 import type { IngestDelta } from "./contract.ts";
 
 const PACKAGE_ROOT = join(import.meta.dirname, "..");
+// npm always includes package.json in the tarball, so this resolves the same
+// whether tracetree is running from a checkout or from node_modules.
+const { version: VERSION }: { version: string } = JSON.parse(
+  readFileSync(join(PACKAGE_ROOT, "package.json"), "utf8"),
+);
 const DEFAULT_DB = join(PACKAGE_ROOT, "data", "index.db");
 
 interface Flags {
@@ -385,7 +390,8 @@ const USAGE =
   "  stats  [--json]        overview of what is indexed\n" +
   "  tree   <sessionId>     spawn tree for one session\n" +
   '  query  "SELECT ..."    ad-hoc SQL\n\n' +
-  "  --root <dir>  --db <file>  --limit <n>  --port <n>  --host <addr>  --no-watch\n\n" +
+  "  --root <dir>  --db <file>  --limit <n>  --port <n>  --host <addr>  --no-watch\n" +
+  "  --version\n\n" +
   "  serve binds 127.0.0.1 unless --host says otherwise; it has no authentication,\n" +
   "  so anything that reaches the port can read every transcript in the index.";
 
@@ -397,6 +403,10 @@ function main(): void {
   // is pipeable and does not fail a script.
   if (command === "help" || command === "--help" || command === "-h") {
     console.log(USAGE);
+    return;
+  }
+  if (command === "--version" || command === "-v") {
+    console.log(VERSION);
     return;
   }
 

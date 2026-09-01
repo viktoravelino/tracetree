@@ -37,6 +37,15 @@ cli=$PROBE/node_modules/.bin/tracetree
 # Asking for help must succeed, not print "unknown command" and exit 1.
 "$cli" --help >/dev/null
 
+# --version reads package.json relative to the install, so it is only really
+# exercised from outside a checkout.
+installed=$("$cli" --version)
+declared=$(node -p "require('$ROOT/package.json').version")
+[[ $installed == "$declared" ]] || {
+  echo "::error::installed --version says $installed, package.json says $declared"
+  exit 1
+}
+
 "$cli" serve --port "$PORT" --root "$CLAUDE" --db "$PROBE/index.db" --no-watch >"$PROBE/serve.log" 2>&1 &
 server=$!
 
