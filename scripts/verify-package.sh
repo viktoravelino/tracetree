@@ -68,15 +68,27 @@ if [[ -z $css ]]; then
   exit 1
 fi
 
-# An unresolved `@import "tailwindcss"` makes the bundle fail and the page 500;
-# a resolved one is tens of kilobytes. The threshold only has to tell those two
-# apart.
-bytes=$(curl -s -o /dev/null -w '%{size_download}' "http://127.0.0.1:$PORT$css")
-if ((bytes < 10000)); then
-  echo "::error::$css is $bytes bytes; tailwind did not resolve"
-  cat "$PROBE/serve.log"
+# Size proves nothing here. Uncompiled Tailwind -- the source concatenated with
+# node_modules/tailwindcss/index.css -- is about the same size as the compiled
+# output, and that is exactly how an unstyled dashboard shipped in 0.1.1. What
+# separates them is content: `@apply` is a directive that compilation removes,
+# and utility classes only exist once it has run.
+curl -s "http://127.0.0.1:$PORT$css" >"$PROBE/app.css"
+bytes=$(wc -c <"$PROBE/app.css")
+
+if grep -Fq '@apply' "$PROBE/app.css"; then
+  echo "::error::$css still contains @apply; tailwind did not compile"
   exit 1
 fi
+
+# Matched loosely on whitespace: the shipped file is minified (`.flex{`) and Bun
+# pretty-prints it when serving (`.flex {`).
+for utility in flex grid rounded-lg shrink-0; do
+  grep -Eq "\.$utility[[:space:]]*[{]" "$PROBE/app.css" || {
+    echo "::error::$css has no .$utility rule; tailwind produced no utilities"
+    exit 1
+  }
+done
 
 [[ $(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PORT/api/overview") == 200 ]] ||
   { echo "::error::/api/overview did not answer"; exit 1; }

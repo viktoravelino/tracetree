@@ -92,10 +92,15 @@ Runtime is Bun: `bun:sqlite`, native TypeScript, and `Bun.serve`'s HTML imports,
 so there is no bundler config and no native module to build. The UI is React with
 shadcn/ui (`base-mira`, Base UI primitives, Lucide icons) over Tailwind v4.
 
-Tailwind is compiled by `bun-plugin-tailwind`, registered in `bunfig.toml` under
-`[serve.static]`. That hook is read by `Bun.serve`, which is how the app runs —
-note that the `bun build` CLI does not read it, so building the page from the
-command line emits the stylesheet unprocessed. Serve it.
+Tailwind is compiled ahead of time, not at serve time: `bun run build:css`
+writes `web/app.css`, which is what `web/index.html` links and what the package
+ships. `prepack` runs it, so a published tarball always carries compiled CSS.
+
+It used to be compiled at serve time by `bun-plugin-tailwind` registered in
+`bunfig.toml`, and that is why 0.1.1 and 0.1.2 served an unstyled page: Bun
+reads `bunfig.toml` from the **current working directory**, so a copy installed
+from npm and run from your own project never loaded the plugin, and the
+stylesheet arrived as uncompiled source. Precompiling removes the question.
 
 The theme lives entirely in `web/styles.css` as CSS custom properties, the shape
 shadcn generates: `:root` and `.dark` blocks mapped into Tailwind through

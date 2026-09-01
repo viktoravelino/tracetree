@@ -9,7 +9,7 @@
 - [ ] `bun run typecheck`
 - [ ] `bun run lint`
 - [ ] `bun run demo --no-serve`
-- [ ] `scripts/verify-package.sh` — required if this touches `package.json`, `bunfig.toml` or `web/styles.css`, because a checkout cannot catch a runtime dependency filed as a devDependency
+- [ ] `scripts/verify-package.sh` — required if this touches `package.json`, `web/styles.css` or the build, because a checkout runs from the one directory where everything happens to resolve
 
 <!--
 Open it and stop here: the maintainer merges. Please don't merge your own PR or
