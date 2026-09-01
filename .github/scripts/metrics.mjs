@@ -53,15 +53,25 @@ const get = async (url, headers) => {
 
 let ok = 0;
 const failures = [];
+const skipped = [];
+// A skip is neither a success nor a failure: it does not count toward `ok`, so
+// a run where every section skipped still fails rather than silently recording
+// nothing.
+const skip = (name, why) => {
+  skipped.push(name);
+  console.error(`${name}: ${why}, skipping`);
+};
 const section = async (name, fn) => {
   try {
     await fn();
     ok++;
   } catch (err) {
+    if (err instanceof Skip) return skip(name, err.message);
     failures.push(name);
     console.error(`${name}: ${err.message}`);
   }
 };
+class Skip extends Error {}
 
 // --- GitHub: traffic views/clones per day, plus repo counts ---------------
 const gh = (path) =>
@@ -109,19 +119,28 @@ await section("github referrers", async () => {
 // --- npm: daily downloads (last month each run; the merge covers gaps) -----
 await section("npm", async () => {
   const pkg = process.env.NPM_PACKAGE;
-  if (!pkg) return console.error("npm: NPM_PACKAGE unset, skipping");
+  if (!pkg) throw new Skip("NPM_PACKAGE unset");
   const npm = await readJson("npm.json");
-  const range = await get(`https://api.npmjs.org/downloads/range/last-month/${pkg}`);
+  const url = `https://api.npmjs.org/downloads/range/last-month/${pkg}`;
+  // The downloads API 404s for a package with no rollup yet, which is what a
+  // just-published one looks like for its first day. That is an absence of
+  // data, not a failure to fetch it.
+  const res = await fetch(url);
+  if (res.status === 404) throw new Skip("no downloads recorded yet");
+  if (!res.ok) throw new Error(`${res.status} ${url}`);
+  const range = await res.json();
   for (const d of range.downloads) npm[d.day] = d.downloads;
   await writeJson("npm.json", npm);
 });
 
 if (ok === 0) {
-  console.error(`every section failed: ${failures.join(", ")}`);
+  console.error(`nothing was recorded: ${[...failures, ...skipped].join(", ")}`);
   process.exit(1);
 }
 console.error(
-  `done: ${ok} section(s) ok${failures.length ? `, failed: ${failures.join(", ")}` : ""}`,
+  `done: ${ok} section(s) ok` +
+    (failures.length ? `, failed: ${failures.join(", ")}` : "") +
+    (skipped.length ? `, skipped: ${skipped.join(", ")}` : ""),
 );
 
 // --- Actions job summary: the last few days at a glance --------------------
