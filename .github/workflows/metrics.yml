@@ -1,0 +1,58 @@
+name: Metrics
+
+# Daily snapshot onto the orphan `metrics` branch — GitHub's traffic API forgets
+# after 14 days, so this job is what makes the numbers history. It writes to a
+# branch rather than to main so the data never touches the package or the diff.
+#
+# Secret: METRICS_PAT — fine-grained, this repository, Administration: read. The
+# default Actions token 403s on the traffic endpoints. Without it the GitHub
+# sections fail and the npm section still records; the run only fails if every
+# section did.
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: metrics
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main (workflow + script)
+        uses: actions/checkout@v7
+
+      - name: Checkout the metrics data branch
+        uses: actions/checkout@v7
+        with:
+          ref: metrics
+          path: metrics-data
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Snapshot
+        env:
+          REPO: ${{ github.repository }}
+          DATA_DIR: metrics-data/data
+          METRICS_PAT: ${{ secrets.METRICS_PAT }}
+          GITHUB_TOKEN: ${{ github.token }}
+          NPM_PACKAGE: tracetree
+        run: node .github/scripts/metrics.mjs
+
+      - name: Commit
+        working-directory: metrics-data
+        run: |
+          git config user.name "metrics[bot]"
+          git config user.email "metrics@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet && echo "no change" && exit 0
+          git commit -m "metrics: $(date -u +%F)"
+          git push origin metrics
