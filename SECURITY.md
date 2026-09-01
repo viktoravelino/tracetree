@@ -38,6 +38,21 @@ derived data that can be deleted and rebuilt at any time.
 - The demo data (`bun run demo`) is synthetic and safe to publish; your real
   index is not.
 
+## How this repository is configured
+
+Relevant if you are reading the source to decide whether to trust the package:
+
+- Secret scanning and push protection are on, so a credential cannot be pushed
+  here without being blocked at the point of push.
+- Dependabot alerts and security updates are on, and version updates arrive
+  monthly under `.github/dependabot.yml`.
+- `main` requires a pull request with CI green -- typecheck, lint, and the two
+  end-to-end jobs -- before anything merges.
+- `v*` tags cannot be deleted or moved once pushed. A published npm version can
+  never be replaced, so the tag it was built from stays put too.
+- Releases publish through npm trusted publishing (OIDC), so no npm token exists
+  in this repository to leak, and every release after 0.1.0 carries provenance.
+
 ## Reporting a vulnerability
 
 Use GitHub's private vulnerability reporting on this repository (_Security_ →
