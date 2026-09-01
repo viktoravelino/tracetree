@@ -21,6 +21,7 @@ interface Flags {
   json: boolean;
   limit: number;
   port: number;
+  host: string | undefined;
   watch: boolean;
   positionals: string[];
 }
@@ -33,6 +34,7 @@ function parseFlags(argv: string[]): Flags {
   let json = false;
   let limit = 20;
   let port = 4000;
+  let host: string | undefined;
   let watch = true;
 
   for (let i = 0; i < argv.length; i++) {
@@ -45,10 +47,11 @@ function parseFlags(argv: string[]): Flags {
     else if (arg === "--db") db = argv[++i];
     else if (arg === "--limit") limit = Number(argv[++i] ?? limit);
     else if (arg === "--port") port = Number(argv[++i] ?? port);
+    else if (arg === "--host") host = argv[++i];
     else positionals.push(arg);
   }
 
-  return { root: resolveRoot(root), db: db ?? DEFAULT_DB, full, json, limit, port, watch, positionals };
+  return { root: resolveRoot(root), db: db ?? DEFAULT_DB, full, json, limit, port, host, watch, positionals };
 }
 
 const compact = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
@@ -317,6 +320,7 @@ function cmdServe(flags: Flags): void {
     db,
     root: flags.root,
     port: flags.port,
+    ...(flags.host === undefined ? {} : { hostname: flags.host }),
     subscribe:
       watcher === null
         ? undefined
@@ -385,7 +389,7 @@ function main(): void {
           "  stats  [--json]        overview of what is indexed\n" +
           "  tree   <sessionId>     spawn tree for one session\n" +
           '  query  "SELECT ..."    ad-hoc SQL\n\n' +
-          "  --root <dir>  --db <file>  --limit <n>  --port <n>  --no-watch",
+          "  --root <dir>  --db <file>  --limit <n>  --port <n>  --host <addr>  --no-watch",
       );
       process.exitCode = 1;
   }

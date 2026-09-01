@@ -28,6 +28,16 @@ export interface ServeOptions {
   db: Database;
   root: string;
   port: number;
+  /**
+   * Interface to bind. Defaults to loopback.
+   *
+   * This serves an entire transcript history — every message, tool call, file
+   * path and screenshot — with no authentication, because it is a local reader.
+   * Bun binds all interfaces when given no hostname, which on a laptop means
+   * anyone on the same network can read it. Loopback is the only safe default;
+   * exposing it has to be a deliberate act.
+   */
+  hostname?: string;
   /** Subscribe to ingest deltas; returns an unsubscribe function. */
   subscribe?: (listener: (delta: IngestDelta) => void) => () => void;
 }
@@ -296,11 +306,12 @@ function streamRoute(
 // ---------------------------------------------------------------------------
 
 export function startServer(options: ServeOptions): Bun.Server<undefined> {
-  const { db, root, port, subscribe } = options;
+  const { db, root, port, subscribe, hostname = "127.0.0.1" } = options;
   const handleStream = streamRoute(root, subscribe);
 
   return Bun.serve({
     port,
+    hostname,
     // Bun closes a request idle for 10s by default, which is shorter than the
     // stream's 15s heartbeat: a quiet dashboard would have its SSE connection
     // reaped and silently reconnect forever. Long-lived streams need no timeout.
