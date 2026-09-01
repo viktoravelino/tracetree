@@ -379,9 +379,26 @@ function cmdQuery(flags: Flags): void {
   });
 }
 
+const USAGE =
+  "  ingest [--full]        read ~/.claude into the index\n" +
+  "  serve  [--port <n>]    dashboard API and web UI, watching for changes\n" +
+  "  stats  [--json]        overview of what is indexed\n" +
+  "  tree   <sessionId>     spawn tree for one session\n" +
+  '  query  "SELECT ..."    ad-hoc SQL\n\n' +
+  "  --root <dir>  --db <file>  --limit <n>  --port <n>  --host <addr>  --no-watch\n\n" +
+  "  serve binds 127.0.0.1 unless --host says otherwise; it has no authentication,\n" +
+  "  so anything that reaches the port can read every transcript in the index.";
+
 function main(): void {
   const flags = parseFlags(process.argv.slice(2));
   const command = flags.positionals[0] ?? "ingest";
+
+  // Asking for help is not an error: it goes to stdout and exits 0, so `--help`
+  // is pipeable and does not fail a script.
+  if (command === "help" || command === "--help" || command === "-h") {
+    console.log(USAGE);
+    return;
+  }
 
   switch (command) {
     case "ingest":
@@ -400,15 +417,7 @@ function main(): void {
       cmdQuery(flags);
       break;
     default:
-      console.error(
-        `unknown command "${command}"\n\n` +
-          "  ingest [--full]        read ~/.claude into the index\n" +
-          "  serve  [--port <n>]    dashboard API and web UI, watching for changes\n" +
-          "  stats  [--json]        overview of what is indexed\n" +
-          "  tree   <sessionId>     spawn tree for one session\n" +
-          '  query  "SELECT ..."    ad-hoc SQL\n\n' +
-          "  --root <dir>  --db <file>  --limit <n>  --port <n>  --host <addr>  --no-watch",
-      );
+      console.error(`unknown command "${command}"\n\n${USAGE}`);
       process.exitCode = 1;
   }
 }

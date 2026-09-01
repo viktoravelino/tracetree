@@ -45,9 +45,12 @@ jobs:
       - run: bun run typecheck
       - run: bun run lint
 
-      # The same end-to-end check CI runs, because a release that cannot read a
-      # transcript is worse than no release.
+      # The same end-to-end checks CI runs, because a release that cannot read a
+      # transcript, or serves an unstyled error page once installed, is worse
+      # than no release. The second one runs against the tarball this job is
+      # about to publish.
       - run: bun run demo --no-serve
+      - run: scripts/verify-package.sh
 
       # A tag that disagrees with package.json publishes a version nobody asked
       # for, and the mismatch is invisible afterwards.

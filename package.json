@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
+    "bun-plugin-tailwind": "^0.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.39.0",
@@ -65,17 +66,15 @@
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.3",
     "tw-animate-css": "^1.4.0"
   },
   "devDependencies": {
-    "@tailwindcss/cli": "^4.3.3",
     "@types/bun": "latest",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
-    "bun-plugin-tailwind": "^0.1.2",
     "oxfmt": "^0.66.0",
     "oxlint": "^1.81.0",
-    "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
   },
   "engines": {
