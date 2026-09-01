@@ -20,14 +20,25 @@ The binding is to the workflow **filename**, so renaming `release.yml` breaks
 publishing until the setting is updated.
 
 The very first publish cannot use OIDC, because the package does not exist yet
-and so has no trusted-publisher settings. Publish `0.1.0` once by hand:
+and so has no trusted-publisher settings. `0.1.0` was published by hand:
 
 ```bash
-npm login
-npm publish            # publishConfig already sets access: public
+npm publish --provenance=false --otp=<code>
 ```
 
+Both flags are needed only for that bootstrap publish. `--provenance=false`
+overrides `publishConfig`, because provenance is generated from a CI runner's
+OIDC token and cannot be produced on a laptop; the workflow attaches it to every
+release after this one. `--otp` is the account's 2FA code, which the registry
+demands for a publish from outside CI and not for a trusted-publisher one.
+
 Then add the trusted publisher above, and every release after that is a tag.
+
+Once it is configured, switch *Publishing access* to **require two-factor
+authentication and disallow bypass 2FA tokens**. Trusted publishing works under
+the strictest setting -- there is no token in this repository for that rule to
+break -- and npm is restricting 2FA-bypassing tokens for direct publishing from
+January 2027 anyway.
 
 ## Cutting a release
 
