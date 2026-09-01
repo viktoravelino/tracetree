@@ -31,7 +31,7 @@ scripts/verify-package.sh    # if you touched dependencies or the files list
 ```
 
 The last one packs the tarball, installs it into an empty project and serves it.
-Run it for anything that touches `package.json`, `bunfig.toml` or `web/styles.css`:
+Run it for anything that touches `package.json`, `web/styles.css` or the build:
 a checkout has every devDependency installed, so it physically cannot show you a
 runtime dependency filed in the wrong section. That mistake shipped once.
 

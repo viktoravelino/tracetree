@@ -90,8 +90,8 @@ so the fix for a bad release is always a new version, never a re-push of a tag.
 
 ## What ships
 
-`files` in `package.json` decides: `src`, `web`, `scripts`, `bunfig.toml`,
-`components.json`, `tsconfig.json`, `README.md`, `LICENSE`.
+`files` in `package.json` decides: `src`, `web` (including the generated
+`web/app.css`), `scripts/demo.ts`, `tsconfig.json`, `README.md`, `LICENSE`.
 
 TypeScript ships unbuilt on purpose. tracetree needs Bun at runtime anyway —
 `bun:sqlite`, `Bun.serve`'s HTML imports — so there is nothing to gain from

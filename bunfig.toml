@@ -1,3 +1,0 @@
-# Tailwind is compiled while Bun bundles the page it is imported from.
-[serve.static]
-plugins = ["bun-plugin-tailwind"]

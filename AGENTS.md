@@ -54,11 +54,17 @@ Change any of these only if the maintainer asks for that change specifically.
   to override it deliberately. Never change the default.
 - **No `rehype-raw`.** Transcripts contain arbitrary model output; raw HTML is
   never parsed into the page.
-- **Runtime dependency vs devDependency is decided by what the _server_ needs.**
-  Anything `web/styles.css` or `bunfig.toml` pulls in when a page is built —
-  `tailwindcss`, `bun-plugin-tailwind` — is a runtime dependency. A checkout
-  cannot catch a mistake here, because it has every devDependency installed;
-  `scripts/verify-package.sh` can, and exists because this shipped broken once.
+- **Nothing compiles CSS at serve time.** `bun run build:css` writes
+  `web/app.css` from `web/styles.css`, `index.html` links the compiled file, and
+  `prepack` regenerates it before every publish. Do not reintroduce a serve-time
+  plugin: `bunfig.toml` is read from the current working directory, so it simply
+  does not exist for a copy running out of someone else's `node_modules`. That
+  shipped an unstyled dashboard twice.
+- **A checkout cannot tell you whether the package works.** It has every
+  devDependency installed and it runs from the one directory where `bunfig.toml`
+  and relative paths happen to resolve. `scripts/verify-package.sh` installs the
+  tarball somewhere else and inspects what is actually served — and it checks CSS
+  _content_, not size, because uncompiled Tailwind is the same size as compiled.
 - **Ingest is incremental.** Transcripts are append-only JSONL and
   `ingest_state` holds a byte offset per file. Do not make a change that
   requires re-reading everything.
