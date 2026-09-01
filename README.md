@@ -340,11 +340,16 @@ sessions takes about 0.6 s.
 
 ## Contributing
 
-`bun run typecheck` and `bun run lint` are what CI gates on, plus `bun run demo
---no-serve` as an end-to-end check that the reader still reads. `bun run format`
-applies the formatter.
+[CONTRIBUTING.md](CONTRIBUTING.md) has the setup, the checks, and the handful of
+changes that get sent back. The short version: you need Bun, `bun run demo`
+gives you a populated dashboard to work against, and `main` takes pull requests
+that the maintainer merges.
 
-Releases are cut by tagging; see [docs/RELEASING.md](docs/RELEASING.md).
+Conventions and invariants are in [AGENTS.md](AGENTS.md) — for coding agents as
+much as people. Releases are one command; see
+[docs/RELEASING.md](docs/RELEASING.md).
+
+By taking part you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Licence
 

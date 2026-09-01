@@ -1,0 +1,69 @@
+name: Bug report
+description: Something the dashboard, the reader or the CLI gets wrong
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not paste real transcript content. It is the most private data
+        on your machine, and a description of what you saw is almost always
+        enough. If you must show something, use `bun run demo` to reproduce it
+        against synthetic data.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part
+      options:
+        - Dashboard (what is rendered)
+        - Reader (what got indexed, or did not)
+        - Live updates (streaming, follow mode)
+        - CLI (ingest, stats, tree, query)
+        - Install or packaging
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: Does `bun run demo` show it too? That tells us whether it depends on your transcripts.
+      placeholder: |
+        1. bun run demo
+        2. open the orbit-api session
+        3. ...
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: tracetree version
+      description: "`tracetree --version`"
+      placeholder: "0.1.1"
+    validations:
+      required: true
+
+  - type: input
+    id: bun
+    attributes:
+      label: Bun version and OS
+      description: "`bun --version`"
+      placeholder: "1.3.9, macOS 15.6"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Anything the server printed
+      description: Redact paths and content you would rather not publish. This is rendered as a code block.
+      render: text

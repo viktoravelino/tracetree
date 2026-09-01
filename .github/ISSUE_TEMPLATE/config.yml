@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a vulnerability
+    url: https://github.com/viktoravelino/tracetree/security/advisories/new
+    about: Privately, not as a public issue. tracetree serves your whole transcript history with no authentication, so please report anything security-relevant this way.
