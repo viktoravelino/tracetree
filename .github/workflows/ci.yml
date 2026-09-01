@@ -79,4 +79,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.3.9
+      # npm pack triggers prepack, which compiles the stylesheet, so this job
+      # needs the devDependencies even though it only packs and installs.
+      - run: bun install --frozen-lockfile
       - run: scripts/verify-package.sh
