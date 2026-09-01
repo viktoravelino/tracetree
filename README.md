@@ -1,5 +1,8 @@
 # tracetree
 
+[![CI](https://github.com/viktoravelino/tracetree/actions/workflows/ci.yml/badge.svg)](https://github.com/viktoravelino/tracetree/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/tracetree)](https://www.npmjs.com/package/tracetree)
+
 Watch Claude Code agents and subagents work.
 
 Claude Code already writes everything it does to disk — every session, every
@@ -29,19 +32,29 @@ that agent's own thread.
 
 ## Requirements
 
-[Bun](https://bun.sh) 1.1 or newer, and some Claude Code history to read.
-There is no database to install and nothing to compile.
+[Bun](https://bun.sh) 1.1 or newer, and some Claude Code history to read. There
+is no database to install and nothing to compile. Bun is required at runtime,
+not just to build — `bun:sqlite` and `Bun.serve` are load-bearing — so `bunx`
+rather than `npx`.
 
 ## Quick start
 
 ```bash
-bun install
-bun run ingest      # read ~/.claude into data/index.db
-bun run serve       # dashboard on http://localhost:4000
+bunx tracetree ingest    # read ~/.claude into data/index.db
+bunx tracetree serve     # dashboard on http://127.0.0.1:4000
 ```
+
+From a clone, the same two are `bun install && bun run ingest` then
+`bun run serve`.
 
 `serve` catches the index up first, then watches for changes, so a session you
 start afterwards appears on its own.
+
+> **It serves your transcripts with no authentication.** Everything in the index
+> — every message, tool call, file path and pasted screenshot — is readable by
+> anything that can reach the port, so it binds `127.0.0.1` and nothing else.
+> `--host 0.0.0.0` exposes it to your whole network; there is no login to put in
+> front of it. See [SECURITY.md](SECURITY.md).
 
 ## Try it without your own history
 
@@ -324,6 +337,14 @@ sessions takes about 0.6 s.
   place correctly in the tree via `spawnDepth` and `parentAgentId`.
 - Agent-to-agent `SendMessage` exists but is barely used. The real topology is
   hierarchical: a parent spawns a child with a prompt and gets one report back.
+
+## Contributing
+
+`bun run typecheck` and `bun run lint` are what CI gates on, plus `bun run demo
+--no-serve` as an end-to-end check that the reader still reads. `bun run format`
+applies the formatter.
+
+Releases are cut by tagging; see [docs/RELEASING.md](docs/RELEASING.md).
 
 ## Licence
 
