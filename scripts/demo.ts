@@ -14,8 +14,11 @@
  *   bun run demo --port 5000  somewhere else
  *   bun run demo --no-serve   just write the tree and the index
  */
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+// `Bun.write` creates the parent directories, which is most of what this
+// script would otherwise need `mkdir -p` for. `rmSync` has no Bun equivalent
+// that does not shell out.
+import { rmSync } from "node:fs";
+import { join } from "node:path";
 
 import { openDb } from "../src/db.ts";
 import { ingest } from "../src/ingest.ts";
@@ -205,8 +208,7 @@ const agents = [
 
 for (const agent of agents) {
   const dir = join(ROOT, "projects", SLUG, SESSION, "subagents");
-  mkdirSync(dir, { recursive: true });
-  writeFileSync(
+  await Bun.write(
     join(dir, `agent-${agent.id}.meta.json`),
     JSON.stringify({
       agentType: agent.type,
@@ -264,8 +266,7 @@ others.forEach(([slug, cwd, sessionTitle, branch], i) => {
 // Write it all out.
 // ---------------------------------------------------------------------------
 for (const [path, rows] of files) {
-  mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, `${rows.join("\n")}\n`);
+  await Bun.write(path, `${rows.join("\n")}\n`);
 }
 
 const tasks = [
@@ -274,11 +275,12 @@ const tasks = [
   { id: "3", subject: "Roll out logging-only for 24h", status: "in_progress", activeForm: "Rolling out behind a flag" },
 ];
 const taskDir = join(ROOT, "tasks", SESSION);
-mkdirSync(taskDir, { recursive: true });
 for (const task of tasks) {
-  writeFileSync(join(taskDir, `${task.id}.json`), JSON.stringify({ ...task, blocks: [], blockedBy: [] }, null, 2));
+  await Bun.write(
+    join(taskDir, `${task.id}.json`),
+    JSON.stringify({ ...task, blocks: [], blockedBy: [] }, null, 2),
+  );
 }
-mkdirSync(join(ROOT, "sessions"), { recursive: true });
 
 console.log(`wrote ${files.size} transcripts to ${ROOT}`);
 
