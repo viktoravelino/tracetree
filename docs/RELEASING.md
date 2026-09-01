@@ -43,19 +43,43 @@ January 2027 anyway.
 ## Cutting a release
 
 ```bash
-npm version patch      # or minor / major — writes package.json and tags
-git push --follow-tags
+bun run release patch          # or minor / major / an explicit 0.2.0-rc.1
 ```
 
-The workflow refuses to publish if the tag disagrees with `package.json`, so
-these two must move together; `npm version` does that in one step.
+That is the whole thing. `scripts/release.sh` sets the version, runs the checks
+the workflow will run, commits, tags, and pushes both; the tag is what
+publishes.
 
-A tag containing a hyphen (`v0.2.0-rc.1`) is marked as a prerelease on GitHub.
+It runs the checks *after* writing the version, so what gets verified is the
+tree that gets tagged — `scripts/verify-package.sh` in particular, which packs,
+installs into an empty project and serves it. Packaging is where the last real
+bug was, and a checkout cannot see that class of bug because it has every
+devDependency installed.
+
+Before touching anything it refuses what cannot be undone: a branch other than
+main, a dirty or stale checkout, a tag that already exists locally or on origin,
+and a version already on npm. If a check fails, a trap puts `package.json` back.
+
+The workflow independently refuses to publish if the tag disagrees with
+`package.json`. A tag containing a hyphen (`v0.2.0-rc.1`) is marked as a
+prerelease on GitHub.
+
+It pushes straight to main, which the ruleset permits for a repository admin;
+GitHub prints the rules it bypassed, which is informational, not a failure.
 
 ## Rehearsing
 
-*Actions* → *Release* → *Run workflow*, with **dry run** ticked. It runs every
-check and `npm publish --dry-run`, publishing nothing and creating no release.
+```bash
+DRY_RUN=1 bun run release patch
+```
+
+Runs every check against the bumped version, restores `package.json`, and prints
+what it would have committed, tagged and pushed. Nothing leaves the machine.
+
+There is also *Actions* → *Release* → *Run workflow* with **dry run** ticked,
+which runs the workflow's own checks and `npm publish --dry-run`. Note that it
+does not exercise OIDC, so it cannot tell you whether trusted publishing is
+correctly configured — only a real publish does that.
 
 ## If a release half-fails
 
