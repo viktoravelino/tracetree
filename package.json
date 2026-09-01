@@ -29,8 +29,7 @@
     "LICENSE",
     "README.md",
     "bunfig.toml",
-    "components.json",
-    "scripts",
+    "scripts/demo.ts",
     "src",
     "tsconfig.json",
     "web"
