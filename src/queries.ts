@@ -441,9 +441,7 @@ export function getSession(
   sessionId: string,
   liveSessionIds: Set<string>,
 ): SessionDetail | null {
-  const row = db
-    .query<SessionRow, [string]>(`${SESSION_SELECT} WHERE s.id = ?`)
-    .get(sessionId);
+  const row = db.query<SessionRow, [string]>(`${SESSION_SELECT} WHERE s.id = ?`).get(sessionId);
   if (row === null) return null;
 
   const agentRows = db

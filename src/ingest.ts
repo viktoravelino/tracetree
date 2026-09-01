@@ -170,7 +170,9 @@ function decodedSize(base64: string): number {
  * lets a page of messages be listed without dragging hundreds of kilobytes of
  * image data through the API for each one.
  */
-function imagesOf(content: TranscriptMessageContent): { index: number; mediaType: string; bytes: number }[] {
+function imagesOf(
+  content: TranscriptMessageContent,
+): { index: number; mediaType: string; bytes: number }[] {
   const images: { index: number; mediaType: string; bytes: number }[] = [];
   for (const block of blocksOf(content)) {
     if (block.type !== "image") continue;
@@ -226,9 +228,7 @@ function ingestTranscript(
              COALESCE((SELECT is_error FROM tool_uses t WHERE t.id = ?), 0),
              COALESCE((SELECT spawned_agent_id FROM tool_uses t WHERE t.id = ?), NULL))`,
   );
-  const attachResult = db.prepare(
-    "UPDATE tool_uses SET result = ?, is_error = ? WHERE id = ?",
-  );
+  const attachResult = db.prepare("UPDATE tool_uses SET result = ?, is_error = ? WHERE id = ?");
 
   let messages = 0;
   let toolUses = 0;
@@ -592,7 +592,9 @@ export function ingest(db: Database, options: IngestOptions): IngestSummary {
   }
 
   const counted = db
-    .prepare("SELECT (SELECT COUNT(*) FROM agents) AS agents, (SELECT COUNT(*) FROM sessions) AS sessions")
+    .prepare(
+      "SELECT (SELECT COUNT(*) FROM agents) AS agents, (SELECT COUNT(*) FROM sessions) AS sessions",
+    )
     .get() as { agents: number; sessions: number };
   summary.agents = counted.agents;
   summary.sessions = counted.sessions;

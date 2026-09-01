@@ -138,9 +138,7 @@ function Blob({ text, command }: { text: string; command?: string | null }) {
   return (
     <>
       {command !== undefined && command !== null && (
-        <pre className={cn(BLOB_CLASS, "mb-1 text-foreground")}>
-          {command.slice(0, MAX_RENDER)}
-        </pre>
+        <pre className={cn(BLOB_CLASS, "mb-1 text-foreground")}>{command.slice(0, MAX_RENDER)}</pre>
       )}
       <pre className={BLOB_CLASS}>
         {shown}

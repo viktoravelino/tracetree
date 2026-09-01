@@ -210,7 +210,7 @@ copy of what is already on screen. A separate `[Image: original WxH, displayed
 at WxH. Multiply coordinates by N...]` line describes an image's scale for the
 model and arrives as a whole message with no image attached; it is dropped. Both
 are removed at render time, so the raw text stays intact in the index and a
-message that merely *quotes* a marker keeps it.
+message that merely _quotes_ a marker keeps it.
 
 Attached images are served rather than embedded. They live in the transcript as
 base64 and run 23-270KB each -- 96 images across 88 messages here -- so listing
@@ -281,15 +281,15 @@ place breaks the other two at the typecheck, which is the point.
 
 ## Schema
 
-| table | holds |
-| --- | --- |
-| `projects` | one row per `projects/<slug>` directory, resolved to a git root |
-| `sessions` | one row per session, with title, branch, worktree, and rollups |
-| `agents` | one row per subagent, with its parent and spawn depth |
-| `messages` | every message, main thread and subagent alike |
-| `tool_uses` | every tool call, with its result and error flag |
-| `tasks` | todo items per session |
-| `ingest_state` | per-file byte offset, for incremental re-reads |
+| table          | holds                                                           |
+| -------------- | --------------------------------------------------------------- |
+| `projects`     | one row per `projects/<slug>` directory, resolved to a git root |
+| `sessions`     | one row per session, with title, branch, worktree, and rollups  |
+| `agents`       | one row per subagent, with its parent and spawn depth           |
+| `messages`     | every message, main thread and subagent alike                   |
+| `tool_uses`    | every tool call, with its result and error flag                 |
+| `tasks`        | todo items per session                                          |
+| `ingest_state` | per-file byte offset, for incremental re-reads                  |
 
 Two conventions matter when writing queries:
 
@@ -306,7 +306,7 @@ Counts and token sums on `sessions` cover the whole tree, subagents included.
 is a poor project key on its own: a session started in `myrepo/src/frontend`
 gets its own slug, and a worktree gets a slug that looks unrelated to the repo
 it belongs to. Cwds are therefore resolved through
-`git rev-parse --git-common-dir`, which points at the *main* repository even
+`git rev-parse --git-common-dir`, which points at the _main_ repository even
 from inside a linked worktree, and the canonical root lands in `repo_path`. On
 this machine that collapses 15 slugs onto 9 real projects.
 

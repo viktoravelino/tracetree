@@ -199,10 +199,7 @@ const COMPONENTS: Components = {
   // GFM task lists. The sanitizer only lets a disabled checkbox through, so
   // this can never be interactive.
   input: ({ node, className, ...props }) => (
-    <input
-      className={cn("mr-1.5 -mt-0.5 align-middle accent-primary", className)}
-      {...props}
-    />
+    <input className={cn("mr-1.5 -mt-0.5 align-middle accent-primary", className)} {...props} />
   ),
 
   strong: ({ node, className, ...props }) => (
@@ -328,7 +325,10 @@ const COMPONENTS: Components = {
     />
   ),
   td: ({ node, className, ...props }) => (
-    <td className={cn("border border-border px-2.5 py-1.5 text-left align-top", className)} {...props} />
+    <td
+      className={cn("border border-border px-2.5 py-1.5 text-left align-top", className)}
+      {...props}
+    />
   ),
 };
 

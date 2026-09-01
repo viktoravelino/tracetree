@@ -80,7 +80,10 @@ export function SessionList({
     <div className="flex h-full min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 flex-col gap-2 p-3">
         <div className="flex items-center justify-between gap-2">
-          <h2 id="sessions-heading" className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+          <h2
+            id="sessions-heading"
+            className="text-xs font-medium tracking-wider text-muted-foreground uppercase"
+          >
             Sessions
           </h2>
           {state.status === "ready" && (
@@ -129,7 +132,11 @@ export function SessionList({
         {state.status === "loading" && <Loading what="sessions" />}
         {state.status === "error" && <ErrorState what="sessions" message={state.error} />}
         {state.status === "ready" && sessions.length === 0 && (
-          <Empty>{filtered ? "No sessions match these filters." : "No sessions indexed for this project."}</Empty>
+          <Empty>
+            {filtered
+              ? "No sessions match these filters."
+              : "No sessions indexed for this project."}
+          </Empty>
         )}
 
         {sessions.length > 0 && (
@@ -152,7 +159,9 @@ export function SessionList({
                     >
                       {session.title ?? "Untitled session"}
                     </span>
-                    {(liveSessionIds !== null ? liveSessionIds.has(session.id) : session.isLive) && (
+                    {(liveSessionIds !== null
+                      ? liveSessionIds.has(session.id)
+                      : session.isLive) && (
                       <Badge className="shrink-0 gap-1 px-1.5">
                         <span
                           aria-hidden="true"
@@ -180,7 +189,10 @@ export function SessionList({
                     )}
                   </span>
                   <span className="flex flex-wrap gap-x-2.5 gap-y-0.5 text-[0.625rem] text-muted-foreground tabular-nums">
-                    <span className="font-mono" title={`${exactNumber(session.messageCount)} messages`}>
+                    <span
+                      className="font-mono"
+                      title={`${exactNumber(session.messageCount)} messages`}
+                    >
                       {compactNumber(session.messageCount)} msgs
                     </span>
                     <span

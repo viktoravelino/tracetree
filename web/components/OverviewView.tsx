@@ -44,7 +44,9 @@ export function OverviewView({ overview, onSelectProject }: OverviewViewProps) {
       <section className="flex flex-col gap-3">
         <h2 className={sectionHeading}>Running now</h2>
         {live.length === 0 ? (
-          <p className="text-xs/relaxed text-muted-foreground">No sessions are running right now.</p>
+          <p className="text-xs/relaxed text-muted-foreground">
+            No sessions are running right now.
+          </p>
         ) : (
           <ul className="flex flex-col gap-2">
             {live.map((session) => (
@@ -62,11 +64,18 @@ export function OverviewView({ overview, onSelectProject }: OverviewViewProps) {
                 <span className={cn("truncate font-medium", session.name === null && "font-mono")}>
                   {session.name ?? session.sessionId}
                 </span>
-                <span className="font-mono text-muted-foreground tabular-nums">pid {session.pid}</span>
+                <span className="font-mono text-muted-foreground tabular-nums">
+                  pid {session.pid}
+                </span>
                 {session.cwd && (
-                  <span className="min-w-0 truncate font-mono text-muted-foreground">{session.cwd}</span>
+                  <span className="min-w-0 truncate font-mono text-muted-foreground">
+                    {session.cwd}
+                  </span>
                 )}
-                <span className="ml-auto shrink-0 text-muted-foreground" title={absoluteTime(session.startedAt)}>
+                <span
+                  className="ml-auto shrink-0 text-muted-foreground"
+                  title={absoluteTime(session.startedAt)}
+                >
                   started {relativeTime(session.startedAt)}
                 </span>
               </li>

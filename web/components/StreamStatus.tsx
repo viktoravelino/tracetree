@@ -22,10 +22,7 @@ export function StreamStatus({ stream }: { stream: StreamState }) {
   return (
     <span className="inline-flex items-center gap-1.5" data-status={stream.status}>
       <Badge variant={VARIANTS[stream.status]} className="gap-1.5">
-        <Icon
-          className={cn(stream.status === "connecting" && "animate-spin")}
-          aria-hidden="true"
-        />
+        <Icon className={cn(stream.status === "connecting" && "animate-spin")} aria-hidden="true" />
         <span role="status">
           {label}
           {stream.status === "reconnecting" && stream.attempt > 0 && (
@@ -68,7 +65,9 @@ const VARIANTS = {
 /** A fuller sentence for screen readers, where a two-word pill is not enough. */
 function sentence(stream: StreamState): string {
   const seen =
-    stream.lastEventAt === null ? "no events yet" : `last event ${relativeTime(stream.lastEventAt)}`;
+    stream.lastEventAt === null
+      ? "no events yet"
+      : `last event ${relativeTime(stream.lastEventAt)}`;
   switch (stream.status) {
     case "open":
       return `Live updates connected, ${seen}.`;

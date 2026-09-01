@@ -2,7 +2,14 @@ import { useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { ChevronDown, ChevronRight, Waypoints } from "lucide-react";
 
 import type { AgentNode } from "../../src/contract.ts";
-import { agentDotClass, compactNumber, duration, exactNumber, hueFor, totalTokens } from "../format.ts";
+import {
+  agentDotClass,
+  compactNumber,
+  duration,
+  exactNumber,
+  hueFor,
+  totalTokens,
+} from "../format.ts";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -146,7 +153,10 @@ export function AgentTree({
             {open && (
               // The rail: one vertical line per group, so depth is readable at
               // a glance and every child of a thread lines up under it.
-              <ul role="group" className="mt-1 ml-3 flex flex-col gap-1 border-l border-border pl-3">
+              <ul
+                role="group"
+                className="mt-1 ml-3 flex flex-col gap-1 border-l border-border pl-3"
+              >
                 {renderLevel(row.id)}
               </ul>
             )}
@@ -156,7 +166,12 @@ export function AgentTree({
 
   return (
     <div className="text-xs/relaxed">
-      <ul role="tree" aria-label="Session threads" className="flex flex-col gap-1" onKeyDown={onKeyDown}>
+      <ul
+        role="tree"
+        aria-label="Session threads"
+        className="flex flex-col gap-1"
+        onKeyDown={onKeyDown}
+      >
         {renderLevel(null)}
       </ul>
     </div>
@@ -196,7 +211,10 @@ function NodeRow({
       data-new={fresh ? "true" : undefined}
     >
       <span className="flex items-center gap-2">
-        <span className="flex size-3 shrink-0 items-center justify-center text-muted-foreground" aria-hidden="true">
+        <span
+          className="flex size-3 shrink-0 items-center justify-center text-muted-foreground"
+          aria-hidden="true"
+        >
           {row.childIds.length > 0 ? (
             open ? (
               <ChevronDown className="size-3" />
@@ -206,7 +224,10 @@ function NodeRow({
           ) : null}
         </span>
         {node ? (
-          <span className={cn("size-2 shrink-0 rounded-full", agentDotClass(hue))} aria-hidden="true" />
+          <span
+            className={cn("size-2 shrink-0 rounded-full", agentDotClass(hue))}
+            aria-hidden="true"
+          />
         ) : (
           <Waypoints className="size-3 shrink-0 text-primary" aria-hidden="true" />
         )}

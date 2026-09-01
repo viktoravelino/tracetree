@@ -65,13 +65,10 @@ export function resolveRepo(cwd: string): RepoInfo {
     const topLevel = git(cwd, ["rev-parse", "--show-toplevel"]);
 
     const repoPath =
-      commonDir !== null && basename(commonDir) === ".git"
-        ? dirname(commonDir)
-        : topLevel ?? cwd;
+      commonDir !== null && basename(commonDir) === ".git" ? dirname(commonDir) : (topLevel ?? cwd);
 
     // A linked worktree's own root differs from the shared repository root.
-    const worktree =
-      topLevel !== null && topLevel !== repoPath ? basename(topLevel) : null;
+    const worktree = topLevel !== null && topLevel !== repoPath ? basename(topLevel) : null;
 
     info = { repoPath, worktree, name: basename(repoPath) || repoPath };
   }

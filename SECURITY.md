@@ -40,8 +40,8 @@ derived data that can be deleted and rebuilt at any time.
 
 ## Reporting a vulnerability
 
-Use GitHub's private vulnerability reporting on this repository (*Security* →
-*Report a vulnerability*). Please do not open a public issue for security
+Use GitHub's private vulnerability reporting on this repository (_Security_ →
+_Report a vulnerability_). Please do not open a public issue for security
 problems.
 
 ## Supported versions

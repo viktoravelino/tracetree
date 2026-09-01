@@ -1,4 +1,12 @@
-import { StrictMode, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import {
+  StrictMode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { createRoot } from "react-dom/client";
 import { api } from "./api.ts";
 import { OverviewView } from "./components/OverviewView.tsx";
@@ -173,152 +181,154 @@ function App() {
 
   return (
     <SkillNamesProvider names={skillNames}>
-    <TooltipProvider>
-      <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
-        <header className="flex h-12 shrink-0 items-center gap-3 border-b px-4">
-          <h1 className="shrink-0 text-sm font-semibold tracking-tight">tracetree</h1>
-          <p className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
-            {selectedProject ? (
-              <>
-                <span className="truncate">{selectedProject.name}</span>
-                <span aria-hidden="true">/</span>
-                <span className="truncate font-mono" title={selectedProject.id}>
-                  {selectedProject.id}
-                </span>
-              </>
-            ) : (
-              <span>Claude Code transcript index</span>
-            )}
-          </p>
-
-          <div className="ml-auto flex shrink-0 items-center gap-2">
-            {liveCount > 0 && (
-              <Badge
-                variant={liveIsStale ? "outline" : "default"}
-                className={cn("font-mono", liveIsStale && "text-muted-foreground")}
-                title={
-                  liveIsStale
-                    ? "Liveness is from the last load - the stream is not connected."
-                    : undefined
-                }
-              >
-                {liveCount} live session{liveCount === 1 ? "" : "s"}
-                {liveIsStale && <span className="ml-1 opacity-70">stale</span>}
-              </Badge>
-            )}
-            <StreamStatus stream={stream} />
-            <Button variant="ghost" size="sm" onClick={() => setRefreshKey(refreshKey + 1)}>
-              Refresh
-            </Button>
-          </div>
-        </header>
-
-        {/* Every pane below is handed a box that is already flex/min-h-0/hidden,
-            so each component owns its own scrolling rather than the page doing it. */}
-        <div className="flex min-h-0 flex-1">
-          <aside
-            className={cn(
-              "flex min-h-0 shrink-0 flex-col overflow-hidden border-r bg-sidebar text-sidebar-foreground",
-              "transition-[width] duration-150",
-              navExpanded ? "w-64" : "w-14",
-            )}
-          >
-            <div
-              className={cn(
-                "flex h-10 shrink-0 items-center border-b",
-                navExpanded ? "justify-between px-3" : "justify-center px-1",
+      <TooltipProvider>
+        <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
+          <header className="flex h-12 shrink-0 items-center gap-3 border-b px-4">
+            <h1 className="shrink-0 text-sm font-semibold tracking-tight">tracetree</h1>
+            <p className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
+              {selectedProject ? (
+                <>
+                  <span className="truncate">{selectedProject.name}</span>
+                  <span aria-hidden="true">/</span>
+                  <span className="truncate font-mono" title={selectedProject.id}>
+                    {selectedProject.id}
+                  </span>
+                </>
+              ) : (
+                <span>Claude Code transcript index</span>
               )}
-            >
-              {navExpanded && (
-                <h2 className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-                  Projects
-                </h2>
+            </p>
+
+            <div className="ml-auto flex shrink-0 items-center gap-2">
+              {liveCount > 0 && (
+                <Badge
+                  variant={liveIsStale ? "outline" : "default"}
+                  className={cn("font-mono", liveIsStale && "text-muted-foreground")}
+                  title={
+                    liveIsStale
+                      ? "Liveness is from the last load - the stream is not connected."
+                      : undefined
+                  }
+                >
+                  {liveCount} live session{liveCount === 1 ? "" : "s"}
+                  {liveIsStale && <span className="ml-1 opacity-70">stale</span>}
+                </Badge>
               )}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-7"
-                aria-expanded={navExpanded}
-                aria-label={navExpanded ? "Collapse the project list" : "Expand the project list"}
-                title={navExpanded ? "Collapse the project list" : "Expand the project list"}
-                onClick={() => setNavPinned(!navExpanded)}
-              >
-                {navExpanded ? (
-                  <PanelLeftClose className="size-4" aria-hidden="true" />
-                ) : (
-                  <PanelLeftOpen className="size-4" aria-hidden="true" />
-                )}
+              <StreamStatus stream={stream} />
+              <Button variant="ghost" size="sm" onClick={() => setRefreshKey(refreshKey + 1)}>
+                Refresh
               </Button>
             </div>
-            {overview.status === "loading" && <Loading what="projects" />}
-            {overview.status === "error" && <ErrorState what="projects" message={overview.error} />}
-            {overview.status === "ready" && (
-              <ProjectList
-                projects={projects}
-                selectedId={route.project}
-                onSelect={(project) => navigate({ project, session: null, agent: "" })}
-                collapsed={!navExpanded}
-                liveProjectIds={liveProjectIds}
-              />
-            )}
-          </aside>
+          </header>
 
-          {route.project === null && route.session === null ? (
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-              {overview.status === "loading" && <Loading what="the index overview" />}
+          {/* Every pane below is handed a box that is already flex/min-h-0/hidden,
+            so each component owns its own scrolling rather than the page doing it. */}
+          <div className="flex min-h-0 flex-1">
+            <aside
+              className={cn(
+                "flex min-h-0 shrink-0 flex-col overflow-hidden border-r bg-sidebar text-sidebar-foreground",
+                "transition-[width] duration-150",
+                navExpanded ? "w-64" : "w-14",
+              )}
+            >
+              <div
+                className={cn(
+                  "flex h-10 shrink-0 items-center border-b",
+                  navExpanded ? "justify-between px-3" : "justify-center px-1",
+                )}
+              >
+                {navExpanded && (
+                  <h2 className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+                    Projects
+                  </h2>
+                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7"
+                  aria-expanded={navExpanded}
+                  aria-label={navExpanded ? "Collapse the project list" : "Expand the project list"}
+                  title={navExpanded ? "Collapse the project list" : "Expand the project list"}
+                  onClick={() => setNavPinned(!navExpanded)}
+                >
+                  {navExpanded ? (
+                    <PanelLeftClose className="size-4" aria-hidden="true" />
+                  ) : (
+                    <PanelLeftOpen className="size-4" aria-hidden="true" />
+                  )}
+                </Button>
+              </div>
+              {overview.status === "loading" && <Loading what="projects" />}
               {overview.status === "error" && (
-                <ErrorState what="the index overview" message={overview.error} />
+                <ErrorState what="projects" message={overview.error} />
               )}
               {overview.status === "ready" && (
-                <OverviewView
-                  overview={overview.data}
-                  onSelectProject={(project) => navigate({ project, session: null, agent: "" })}
+                <ProjectList
+                  projects={projects}
+                  selectedId={route.project}
+                  onSelect={(project) => navigate({ project, session: null, agent: "" })}
+                  collapsed={!navExpanded}
+                  liveProjectIds={liveProjectIds}
                 />
               )}
-            </div>
-          ) : (
-            <>
-              {route.project !== null && (
-                <div className="flex w-84 min-h-0 shrink-0 flex-col overflow-hidden border-r">
-                  <SessionList
-                    projectId={route.project}
-                    selectedSessionId={route.session}
-                    onSelect={(session) => navigate({ ...route, session, agent: "" })}
-                    refreshKey={refreshKey}
-                    revision={listRevision}
-                    liveSessionIds={liveSessionIds}
-                  />
-                </div>
-              )}
+            </aside>
+
+            {route.project === null && route.session === null ? (
               <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                {route.session === null ? (
-                  <div className="flex flex-1 flex-col items-center justify-center gap-1 p-8 text-center">
-                    <strong className="text-sm font-medium">No session selected</strong>
-                    <span className="text-sm text-muted-foreground">
-                      Pick a session to see its threads, tasks and transcript.
-                    </span>
-                  </div>
-                ) : (
-                  <SessionView
-                    key={route.session}
-                    sessionId={route.session}
-                    agentId={route.agent}
-                    onSelectAgent={(agent) => navigate({ ...route, agent })}
-                    refreshKey={refreshKey}
-                    revision={revisionOf(overlay, route.session)}
-                    freshAgentIds={freshAgentsOf(overlay, route.session)}
-                    liveSessionIds={liveSessionIds}
-                    onResolveProject={(project) => {
-                      if (route.project === null) navigate({ ...route, project });
-                    }}
+                {overview.status === "loading" && <Loading what="the index overview" />}
+                {overview.status === "error" && (
+                  <ErrorState what="the index overview" message={overview.error} />
+                )}
+                {overview.status === "ready" && (
+                  <OverviewView
+                    overview={overview.data}
+                    onSelectProject={(project) => navigate({ project, session: null, agent: "" })}
                   />
                 )}
               </div>
-            </>
-          )}
+            ) : (
+              <>
+                {route.project !== null && (
+                  <div className="flex w-84 min-h-0 shrink-0 flex-col overflow-hidden border-r">
+                    <SessionList
+                      projectId={route.project}
+                      selectedSessionId={route.session}
+                      onSelect={(session) => navigate({ ...route, session, agent: "" })}
+                      refreshKey={refreshKey}
+                      revision={listRevision}
+                      liveSessionIds={liveSessionIds}
+                    />
+                  </div>
+                )}
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                  {route.session === null ? (
+                    <div className="flex flex-1 flex-col items-center justify-center gap-1 p-8 text-center">
+                      <strong className="text-sm font-medium">No session selected</strong>
+                      <span className="text-sm text-muted-foreground">
+                        Pick a session to see its threads, tasks and transcript.
+                      </span>
+                    </div>
+                  ) : (
+                    <SessionView
+                      key={route.session}
+                      sessionId={route.session}
+                      agentId={route.agent}
+                      onSelectAgent={(agent) => navigate({ ...route, agent })}
+                      refreshKey={refreshKey}
+                      revision={revisionOf(overlay, route.session)}
+                      freshAgentIds={freshAgentsOf(overlay, route.session)}
+                      liveSessionIds={liveSessionIds}
+                      onResolveProject={(project) => {
+                        if (route.project === null) navigate({ ...route, project });
+                      }}
+                    />
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </TooltipProvider>
+      </TooltipProvider>
     </SkillNamesProvider>
   );
 }

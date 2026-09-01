@@ -128,7 +128,10 @@ export function ProjectList({
                   {relativeTime(project.lastActive)}
                 </span>
               </span>
-              <span className="block truncate font-mono text-[0.625rem] text-muted-foreground" title={project.id}>
+              <span
+                className="block truncate font-mono text-[0.625rem] text-muted-foreground"
+                title={project.id}
+              >
                 <bdi>{project.id}</bdi>
               </span>
               <span className="flex flex-wrap gap-x-2 gap-y-0.5 text-[0.625rem] text-muted-foreground tabular-nums">
@@ -142,7 +145,9 @@ export function ProjectList({
                 </span>
                 <span title={`${exactNumber(project.messageCount)} messages`}>
                   <span className="text-muted-foreground/70">msgs</span>{" "}
-                  <span className="font-mono text-foreground">{compactNumber(project.messageCount)}</span>
+                  <span className="font-mono text-foreground">
+                    {compactNumber(project.messageCount)}
+                  </span>
                 </span>
                 {project.worktreeCount > 0 && (
                   <span>

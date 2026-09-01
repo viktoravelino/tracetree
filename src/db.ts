@@ -175,7 +175,15 @@ export function openDb(path: string): Database {
 
 /** Drops all ingested content, keeping the schema. Used by `ingest --full`. */
 export function resetDb(db: Database): void {
-  for (const table of ["ingest_state", "tool_uses", "messages", "tasks", "agents", "sessions", "projects"]) {
+  for (const table of [
+    "ingest_state",
+    "tool_uses",
+    "messages",
+    "tasks",
+    "agents",
+    "sessions",
+    "projects",
+  ]) {
     db.exec(`DELETE FROM ${table}`);
   }
 }

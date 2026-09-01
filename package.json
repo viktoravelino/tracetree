@@ -2,29 +2,25 @@
   "name": "tracetree",
   "version": "0.1.0",
   "description": "Watch Claude Code agents and subagents work: a live dashboard over the transcripts on your disk.",
+  "keywords": [
+    "agents",
+    "bun",
+    "claude-code",
+    "dashboard",
+    "observability",
+    "sqlite",
+    "subagents",
+    "transcripts"
+  ],
+  "homepage": "https://github.com/viktoravelino/tracetree#readme",
+  "bugs": {
+    "url": "https://github.com/viktoravelino/tracetree/issues"
+  },
   "license": "MIT",
   "author": "Viktor Avelino",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/viktoravelino/tracetree.git"
-  },
-  "homepage": "https://github.com/viktoravelino/tracetree#readme",
-  "bugs": {
-    "url": "https://github.com/viktoravelino/tracetree/issues"
-  },
-  "type": "module",
-  "keywords": [
-    "claude-code",
-    "agents",
-    "subagents",
-    "transcripts",
-    "dashboard",
-    "observability",
-    "sqlite",
-    "bun"
-  ],
-  "engines": {
-    "bun": ">=1.1"
   },
   "bin": {
     "tracetree": "src/cli.ts"
@@ -39,6 +35,7 @@
     "tsconfig.json",
     "web"
   ],
+  "type": "module",
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -80,5 +77,8 @@
     "oxlint": "^1.81.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.7.2"
+  },
+  "engines": {
+    "bun": ">=1.1"
   }
 }

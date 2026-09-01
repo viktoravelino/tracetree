@@ -51,7 +51,17 @@ function parseFlags(argv: string[]): Flags {
     else positionals.push(arg);
   }
 
-  return { root: resolveRoot(root), db: db ?? DEFAULT_DB, full, json, limit, port, host, watch, positionals };
+  return {
+    root: resolveRoot(root),
+    db: db ?? DEFAULT_DB,
+    full,
+    json,
+    limit,
+    port,
+    host,
+    watch,
+    positionals,
+  };
 }
 
 const compact = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
@@ -76,7 +86,10 @@ function printTable(rows: Record<string, unknown>[]): void {
     Math.max(col.length, ...rows.map((r) => String(r[col] ?? "").length)),
   );
   const line = (cells: string[]) =>
-    cells.map((c, i) => c.padEnd(widths[i] ?? 0)).join("  ").trimEnd();
+    cells
+      .map((c, i) => c.padEnd(widths[i] ?? 0))
+      .join("  ")
+      .trimEnd();
 
   console.log(line(columns));
   console.log(line(widths.map((w) => "-".repeat(w))));
@@ -227,9 +240,14 @@ function cmdTree(flags: Flags): void {
         `SELECT s.id, s.title, s.cwd, s.git_branch, s.agent_count, s.message_count
            FROM sessions s WHERE s.id LIKE ? || '%' LIMIT 1`,
       )
-      .get(prefix) as
-      | { id: string; title: string | null; cwd: string | null; git_branch: string | null; agent_count: number; message_count: number }
-      | null;
+      .get(prefix) as {
+      id: string;
+      title: string | null;
+      cwd: string | null;
+      git_branch: string | null;
+      agent_count: number;
+      message_count: number;
+    } | null;
 
     if (session == null) {
       console.error(`no session matching "${prefix}"`);

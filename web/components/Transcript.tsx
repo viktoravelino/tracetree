@@ -111,7 +111,11 @@ export function Transcript({
 
   const state = useAsync(
     (signal) =>
-      api.messages(sessionId, { agent: agentId, limit: requestLimit, offset: requestOffset }, signal),
+      api.messages(
+        sessionId,
+        { agent: agentId, limit: requestLimit, offset: requestOffset },
+        signal,
+      ),
     [sessionId, agentId, requestLimit, requestOffset, refreshKey, revision],
     // Reloading on every sync must not blank the pane the user is reading.
     { keepPrevious: true },
@@ -363,12 +367,7 @@ export function Transcript({
               <Empty>This page holds only tool output, shown with the calls that made it.</Empty>
             )}
             {turns.map((turn) => (
-              <TurnView
-                key={turn.id}
-                turn={turn}
-                sessionId={sessionId}
-                onOpenAgent={onOpenAgent}
-              />
+              <TurnView key={turn.id} turn={turn} sessionId={sessionId} onOpenAgent={onOpenAgent} />
             ))}
           </div>
         </div>
@@ -424,7 +423,8 @@ function TurnView({
   sessionId: string;
   onOpenAgent: (agentId: string) => void;
 }) {
-  const seq = turn.firstSeq === turn.lastSeq ? `#${turn.firstSeq}` : `#${turn.firstSeq}-${turn.lastSeq}`;
+  const seq =
+    turn.firstSeq === turn.lastSeq ? `#${turn.firstSeq}` : `#${turn.firstSeq}-${turn.lastSeq}`;
   // A turn's images are spread across the lines it merged, so gather them the
   // same way its prose was gathered.
   const images = useMemo(() => collectImages(turn.messages), [turn.messages]);
@@ -487,7 +487,9 @@ function TurnView({
         <span className="ml-auto shrink-0 tabular-nums">{seq}</span>
       </header>
 
-      {turn.text && <MessageText text={turn.text} muted={turn.kind !== "user" && turn.kind !== "assistant"} />}
+      {turn.text && (
+        <MessageText text={turn.text} muted={turn.kind !== "user" && turn.kind !== "assistant"} />
+      )}
       {images.length > 0 && <MessageImages sessionId={sessionId} images={images} />}
       {turn.thinkingOnly && (
         <p className="mt-3 border-l-2 border-border pl-3 text-xs text-muted-foreground italic">
@@ -571,12 +573,7 @@ function MessageText({ text, muted }: { text: string; muted: boolean }) {
 
   return (
     <>
-      <Markdown
-        className={cn(
-          "mt-3 text-sm",
-          muted ? "text-muted-foreground" : "text-foreground",
-        )}
-      >
+      <Markdown className={cn("mt-3 text-sm", muted ? "text-muted-foreground" : "text-foreground")}>
         {!expanded && long ? `${shown}…` : shown}
       </Markdown>
       {long && (

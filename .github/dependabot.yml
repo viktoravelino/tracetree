@@ -25,4 +25,12 @@ updates:
       everything-else:
         patterns: ["*"]
         exclude-patterns:
-          ["react", "react-dom", "@types/react", "@types/react-dom", "remark-*", "rehype-*", "react-markdown"]
+          [
+            "react",
+            "react-dom",
+            "@types/react",
+            "@types/react-dom",
+            "remark-*",
+            "rehype-*",
+            "react-markdown",
+          ]

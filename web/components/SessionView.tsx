@@ -3,9 +3,17 @@ import { Clock, FolderGit2, GitBranch, Hash, MessageSquare, Waypoints } from "lu
 
 import type { AgentNode, SessionDetail, ToolSummary } from "../../src/contract.ts";
 import { api } from "../api.ts";
-import { agentDotClass, absoluteTime, compactNumber, duration, exactNumber, hueFor, totalTokens } from "../format.ts";
+import {
+  agentDotClass,
+  absoluteTime,
+  compactNumber,
+  duration,
+  exactNumber,
+  hueFor,
+  totalTokens,
+} from "../format.ts";
 import { useAsync } from "../useAsync.ts";
-import { AgentTree, MAIN_THREAD, } from "./AgentTree.tsx";
+import { AgentTree, MAIN_THREAD } from "./AgentTree.tsx";
 import { ErrorState, Loading } from "./States.tsx";
 import { Transcript } from "./Transcript.tsx";
 import { Badge } from "@/components/ui/badge";
@@ -42,9 +50,13 @@ export function SessionView({
   // `revision` is what makes this surgical: only the session named by a sync
   // reloads, and `keepPrevious` keeps the tree and rollups on screen while it
   // does, so a live session does not flash "Loading session…" every few seconds.
-  const state = useAsync((signal) => api.session(sessionId, signal), [sessionId, refreshKey, revision], {
-    keepPrevious: true,
-  });
+  const state = useAsync(
+    (signal) => api.session(sessionId, signal),
+    [sessionId, refreshKey, revision],
+    {
+      keepPrevious: true,
+    },
+  );
 
   // Announce the owning project once, not on every render: the callback is an
   // inline closure upstream, so its identity alone would re-fire the effect.

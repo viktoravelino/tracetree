@@ -221,7 +221,11 @@ function streamRoute(
   const ensureHeartbeat = () => {
     if (heartbeatTimer) return;
     heartbeatTimer = setInterval(() => {
-      broadcast({ type: "heartbeat", at: new Date().toISOString(), liveSessionIds: currentLiveSessionIds() });
+      broadcast({
+        type: "heartbeat",
+        at: new Date().toISOString(),
+        liveSessionIds: currentLiveSessionIds(),
+      });
     }, HEARTBEAT_MS);
   };
   const maybeStopHeartbeat = () => {
@@ -262,7 +266,11 @@ function streamRoute(
           // Sent immediately so a client is never blank while it waits for
           // the first delta or the first 15s heartbeat.
           controller.enqueue(
-            frame({ type: "heartbeat", at: new Date().toISOString(), liveSessionIds: currentLiveSessionIds() }),
+            frame({
+              type: "heartbeat",
+              at: new Date().toISOString(),
+              liveSessionIds: currentLiveSessionIds(),
+            }),
           );
         } catch {
           // Client disconnected before its first write landed.

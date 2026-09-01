@@ -26,14 +26,7 @@ import type { Message, ToolCall } from "../src/contract.ts";
  * user interrupting — most visibly a subagent's completion report, which is one
  * of the more interesting events in an agent run and the least like a user turn.
  */
-export type TurnKind =
-  | "user"
-  | "assistant"
-  | "task"
-  | "command"
-  | "output"
-  | "skill"
-  | "system";
+export type TurnKind = "user" | "assistant" | "task" | "command" | "output" | "skill" | "system";
 
 /**
  * Contents of the first matching `<tag>`, or null.
@@ -79,7 +72,9 @@ export function classifyInjected(text: string): Injected | null {
   // A repeat invocation loads nothing and says so, again as a `user` line and
   // again detached from the call it answers. Anchored to the whole message, so
   // a reply that merely quotes the sentence is not mistaken for one.
-  const reloaded = text.trim().match(/^Skill \/(\S+) is already loaded above; instructions unchanged\.$/);
+  const reloaded = text
+    .trim()
+    .match(/^Skill \/(\S+) is already loaded above; instructions unchanged\.$/);
   if (reloaded !== null) {
     return { kind: "skill", label: `/${reloaded[1] ?? "skill"}`, text: text.trim() };
   }
@@ -308,7 +303,8 @@ function attachSkillBody(turns: Turn[], body: string): boolean {
       if (call === undefined || call.name !== "Skill") continue;
       // The stub result is also the marker for "not filled yet", so a second
       // invocation of the same skill cannot overwrite the first one's body.
-      const unfilled = typeof call.result !== "string" || call.result.startsWith("Launching skill:");
+      const unfilled =
+        typeof call.result !== "string" || call.result.startsWith("Launching skill:");
       if (!unfilled) continue;
       // Replaced rather than mutated: these objects come straight from the
       // fetched page and are re-grouped on every update.
@@ -370,8 +366,7 @@ export function buildTurns(messages: readonly Message[], freshUuids: ReadonlySet
 
   const grouped = coalesce(turns);
   for (const turn of grouped) {
-    turn.thinkingOnly =
-      turn.text === "" && turn.toolCalls.length === 0 && turn.thinkingTokens > 0;
+    turn.thinkingOnly = turn.text === "" && turn.toolCalls.length === 0 && turn.thinkingTokens > 0;
   }
 
   return grouped;

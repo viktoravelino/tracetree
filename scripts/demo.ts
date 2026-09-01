@@ -154,7 +154,11 @@ const main: Ctx = { sessionId: SESSION, cwd: CWD, branch: "feat/rate-limiting" }
 const file = join(ROOT, "projects", SLUG, `${SESSION}.jsonl`);
 
 title(file, main, "Add rate limiting to the public API");
-user(file, main, "We keep getting scraped on /v1/search. Can you add rate limiting to the public API?");
+user(
+  file,
+  main,
+  "We keep getting scraped on /v1/search. Can you add rate limiting to the public API?",
+);
 say(
   file,
   main,
@@ -167,12 +171,48 @@ call(
   main,
   "req_a1",
   "Bash",
-  { command: "rg -n 'router\\.(get|post)' src/routes | head -20", description: "List route handlers" },
+  {
+    command: "rg -n 'router\\.(get|post)' src/routes | head -20",
+    description: "List route handlers",
+  },
   "src/routes/search.ts:12:router.get('/v1/search', handler)\nsrc/routes/docs.ts:8:router.get('/v1/docs', handler)",
 );
-call(file, main, "req_a2", "Agent", { description: "Map the API surface", subagent_type: "general-purpose", prompt: "Inventory every public route." }, "14 public routes; /v1/search is 82% of traffic.");
-call(file, main, "req_a3", "Agent", { description: "Check gateway capabilities", subagent_type: "general-purpose", prompt: "What does the gateway support natively?" }, "Envoy is already in front and ships local_ratelimit.");
-call(file, main, "req_a4", "Agent", { description: "Measure request volume", subagent_type: "Explore", prompt: "Pull 30 days of request counts." }, "p50 4 req/min per key, p99 220 req/min, one key at 40k/day.");
+call(
+  file,
+  main,
+  "req_a2",
+  "Agent",
+  {
+    description: "Map the API surface",
+    subagent_type: "general-purpose",
+    prompt: "Inventory every public route.",
+  },
+  "14 public routes; /v1/search is 82% of traffic.",
+);
+call(
+  file,
+  main,
+  "req_a3",
+  "Agent",
+  {
+    description: "Check gateway capabilities",
+    subagent_type: "general-purpose",
+    prompt: "What does the gateway support natively?",
+  },
+  "Envoy is already in front and ships local_ratelimit.",
+);
+call(
+  file,
+  main,
+  "req_a4",
+  "Agent",
+  {
+    description: "Measure request volume",
+    subagent_type: "Explore",
+    prompt: "Pull 30 days of request counts.",
+  },
+  "p50 4 req/min per key, p99 220 req/min, one key at 40k/day.",
+);
 say(
   file,
   main,
@@ -200,10 +240,34 @@ say(
 
 // The three subagents, one of which nests a fourth.
 const agents = [
-  { id: "a1f0c3e77b21d4a90", type: "general-purpose", desc: "Map the API surface", work: [["rg -c 'router\\.' src/routes/*.ts", "search.ts:1\ndocs.ts:1\nkeys.ts:3"], ["cat src/routes/search.ts", "export const handler = async (req, res) => { /* ... */ }"]] },
-  { id: "b2e4d5a11c37f6b80", type: "general-purpose", desc: "Check gateway capabilities", work: [["envoy --version", "envoy version 1.29.1"]] },
-  { id: "c3d5e6b22a4807c91", type: "Explore", desc: "Measure request volume", work: [["bq query 'select count(*) from requests'", "rows: 1\ntotal: 2,481,309"]] },
-  { id: "d4c6f7a33b5918d02", type: "general-purpose", desc: "Break down the outlier key", parent: "c3d5e6b22a4807c91", work: [["bq query 'select key, count(*) ...'", "key_9f2a: 40,113\nkey_1b77: 3,004"]] },
+  {
+    id: "a1f0c3e77b21d4a90",
+    type: "general-purpose",
+    desc: "Map the API surface",
+    work: [
+      ["rg -c 'router\\.' src/routes/*.ts", "search.ts:1\ndocs.ts:1\nkeys.ts:3"],
+      ["cat src/routes/search.ts", "export const handler = async (req, res) => { /* ... */ }"],
+    ],
+  },
+  {
+    id: "b2e4d5a11c37f6b80",
+    type: "general-purpose",
+    desc: "Check gateway capabilities",
+    work: [["envoy --version", "envoy version 1.29.1"]],
+  },
+  {
+    id: "c3d5e6b22a4807c91",
+    type: "Explore",
+    desc: "Measure request volume",
+    work: [["bq query 'select count(*) from requests'", "rows: 1\ntotal: 2,481,309"]],
+  },
+  {
+    id: "d4c6f7a33b5918d02",
+    type: "general-purpose",
+    desc: "Break down the outlier key",
+    parent: "c3d5e6b22a4807c91",
+    work: [["bq query 'select key, count(*) ...'", "key_9f2a: 40,113\nkey_1b77: 3,004"]],
+  },
 ] as const;
 
 for (const agent of agents) {
@@ -214,9 +278,7 @@ for (const agent of agents) {
       agentType: agent.type,
       description: agent.desc,
       toolUseId: `toolu_${agent.id.slice(0, 10)}`,
-      ..."parent" in agent
-        ? { parentAgentId: agent.parent, spawnDepth: 2 }
-        : { spawnDepth: 1 },
+      ...("parent" in agent ? { parentAgentId: agent.parent, spawnDepth: 2 } : { spawnDepth: 1 }),
     }),
   );
 
@@ -244,11 +306,31 @@ const OTHER_SESSION_IDS = [
 ];
 
 const others = [
-  ["-home-dev-projects-web-client", "/home/dev/projects/web-client", "Fix hydration mismatch on the dashboard", "main"],
-  ["-home-dev-projects-web-client", "/home/dev/projects/web-client", "Migrate the table to virtualised rows", "perf/virtual-rows"],
+  [
+    "-home-dev-projects-web-client",
+    "/home/dev/projects/web-client",
+    "Fix hydration mismatch on the dashboard",
+    "main",
+  ],
+  [
+    "-home-dev-projects-web-client",
+    "/home/dev/projects/web-client",
+    "Migrate the table to virtualised rows",
+    "perf/virtual-rows",
+  ],
   ["-home-dev-projects-billing", "/home/dev/projects/billing", "Reconcile Stripe webhooks", "main"],
-  ["-home-dev-projects-infra", "/home/dev/projects/infra", "Rotate the staging certificates", "main"],
-  ["-home-dev-tools-changelog", "/home/dev/tools/changelog", "Generate release notes from commits", "main"],
+  [
+    "-home-dev-projects-infra",
+    "/home/dev/projects/infra",
+    "Rotate the staging certificates",
+    "main",
+  ],
+  [
+    "-home-dev-tools-changelog",
+    "/home/dev/tools/changelog",
+    "Generate release notes from commits",
+    "main",
+  ],
 ] as const;
 
 others.forEach(([slug, cwd, sessionTitle, branch], i) => {
@@ -258,7 +340,14 @@ others.forEach(([slug, cwd, sessionTitle, branch], i) => {
   title(of, ctx, sessionTitle);
   user(of, ctx, `${sessionTitle}?`);
   say(of, ctx, "Looking at it now.", `req_o${i}`, 60);
-  call(of, ctx, `req_o${i}`, "Read", { file_path: `${cwd}/src/index.ts` }, "export function main() {}");
+  call(
+    of,
+    ctx,
+    `req_o${i}`,
+    "Read",
+    { file_path: `${cwd}/src/index.ts` },
+    "export function main() {}",
+  );
   say(of, ctx, `Done — ${sessionTitle.toLowerCase()} is handled.`, `req_o${i}b`, 45);
 });
 
@@ -270,9 +359,24 @@ for (const [path, rows] of files) {
 }
 
 const tasks = [
-  { id: "1", subject: "Measure current request volume", status: "completed", activeForm: "Measuring request volume" },
-  { id: "2", subject: "Pick a per-key limit from the p99", status: "completed", activeForm: "Choosing the limit" },
-  { id: "3", subject: "Roll out logging-only for 24h", status: "in_progress", activeForm: "Rolling out behind a flag" },
+  {
+    id: "1",
+    subject: "Measure current request volume",
+    status: "completed",
+    activeForm: "Measuring request volume",
+  },
+  {
+    id: "2",
+    subject: "Pick a per-key limit from the p99",
+    status: "completed",
+    activeForm: "Choosing the limit",
+  },
+  {
+    id: "3",
+    subject: "Roll out logging-only for 24h",
+    status: "in_progress",
+    activeForm: "Rolling out behind a flag",
+  },
 ];
 const taskDir = join(ROOT, "tasks", SESSION);
 for (const task of tasks) {
@@ -286,7 +390,9 @@ console.log(`wrote ${files.size} transcripts to ${ROOT}`);
 
 const db = openDb(DB);
 const summary = ingest(db, { root: ROOT, full: true });
-console.log(`indexed ${summary.sessions} sessions, ${summary.agents} agents, ${summary.messages} messages`);
+console.log(
+  `indexed ${summary.sessions} sessions, ${summary.agents} agents, ${summary.messages} messages`,
+);
 
 if (flag("no-serve")) {
   db.close();
