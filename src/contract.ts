@@ -174,6 +174,8 @@ export interface IndexStats {
 }
 
 export interface Overview {
+  /** Version of the running server, not the latest published release. */
+  version: string;
   stats: IndexStats;
   projects: Project[];
   live: LiveSessionInfo[];
@@ -218,7 +220,7 @@ export interface MessageQuery {
  * layer stays a pure function of the database.
  */
 export interface Queries {
-  overview(db: Database, live: LiveSessionInfo[]): Overview;
+  overview(db: Database, live: LiveSessionInfo[]): Omit<Overview, "version">;
   listProjects(db: Database): Project[];
   listSessions(db: Database, query: SessionQuery, liveSessionIds: Set<string>): SessionSummary[];
   getSession(db: Database, sessionId: string, liveSessionIds: Set<string>): SessionDetail | null;

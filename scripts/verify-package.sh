@@ -93,4 +93,12 @@ done
 [[ $(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PORT/api/overview") == 200 ]] ||
   { echo "::error::/api/overview did not answer"; exit 1; }
 
+# The dashboard and CLI must report the version of this installed package.
+overview=$(curl -fsS "http://127.0.0.1:$PORT/api/overview")
+served=$(printf '%s' "$overview" | bun -e 'console.log((await Bun.stdin.json()).version)')
+[[ $served == "$installed" ]] || {
+  echo "::error::overview says $served, installed --version says $installed"
+  exit 1
+}
+
 echo "packaged install serves 200, ${bytes}B of css, and a live api"

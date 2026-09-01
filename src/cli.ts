@@ -1,8 +1,9 @@
 #!/usr/bin/env bun
-import { mkdirSync, readFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import type { Database } from "bun:sqlite";
 
+import { VERSION } from "./version.ts";
 import { openDb, resetDb } from "./db.ts";
 import { ingest } from "./ingest.ts";
 import { readLiveSessions } from "./live.ts";
@@ -12,11 +13,6 @@ import { startWatching } from "./watch.ts";
 import type { IngestDelta } from "./contract.ts";
 
 const PACKAGE_ROOT = join(import.meta.dirname, "..");
-// npm always includes package.json in the tarball, so this resolves the same
-// whether tracetree is running from a checkout or from node_modules.
-const { version: VERSION }: { version: string } = JSON.parse(
-  readFileSync(join(PACKAGE_ROOT, "package.json"), "utf8"),
-);
 const DEFAULT_DB = join(PACKAGE_ROOT, "data", "index.db");
 
 interface Flags {

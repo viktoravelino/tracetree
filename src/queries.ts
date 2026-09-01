@@ -205,7 +205,7 @@ interface AgentTypeRow {
  * `stats.projects` counts repositories, not slug directories, so it agrees
  * with `projects.length`.
  */
-export function overview(db: Database, live: LiveSessionInfo[]): Overview {
+export function overview(db: Database, live: LiveSessionInfo[]): Omit<Overview, "version"> {
   const stats = db
     .query<StatsRow, []>(
       `SELECT (SELECT COUNT(DISTINCT repo_path) FROM projects) AS projects,
